@@ -1,0 +1,37 @@
+server:
+  port: 9100
+
+spring:
+  application:
+    name: cds-config-server
+  cloud:
+    config:
+      server:
+        jdbc:
+          sql: SELECT `KEY`, `VALUE` FROM PROPERTIES WHERE application =? AND profile =? AND label =?
+      label: master
+
+    refresh:
+      enabled: false
+  profiles:
+    active: jdbc
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/cds-gateway?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-test-query: SELECT 1 FROM DUAL
+      connection-timeout: 30000
+      maximum-pool-size: 50
+      max-lifetime: 1800000
+      minimum-idle: 10
+
+#actuator 监控配置，用于监控应用状态和，手动刷新配置文件
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,env,metrics,refresh
+
